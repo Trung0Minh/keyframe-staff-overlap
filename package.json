@@ -1,0 +1,17 @@
+{
+  "name": "keyframe-staff-overlap",
+  "version": "0.1.7",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/build.mjs",
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "node tests/e2e.mjs",
+    "package": "npm run build && python3 scripts/package.py"
+  },
+  "engines": { "node": ">=24" },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

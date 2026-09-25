@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "KeyFrame Staff Overlap",
+  "version": "0.1.7",
+  "description": "Unofficial comparison of public KeyFrame staff credits. Search staff site-wide from any KeyFrame page.",
+  "permissions": ["storage"],
+  "icons": {"16":"icon16.png", "48":"icon48.png", "128":"icon128.png"},
+  "content_scripts": [{"matches":["https://keyframe-staff-list.com/*"], "js":["loader.js"], "run_at":"document_idle"}],
+  "web_accessible_resources": [{
+    "resources":["content/*.js", "data/*.js", "domain/*.js", "shared/*.js", "ui/*.js", "ui/styles.css"],
+    "matches":["https://keyframe-staff-list.com/*"]
+  }]
+}

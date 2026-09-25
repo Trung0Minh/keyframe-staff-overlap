@@ -1,0 +1,14 @@
+{
+  "project": "KeyFrame Staff Overlap browser extension",
+  "files": [
+    "00_AGENT_START_HERE.md",
+    "01_PRODUCT_AND_UX_SPEC.md",
+    "02_DATA_AND_MATCHING_SPEC.md",
+    "03_EXTENSION_ARCHITECTURE.md",
+    "04_IMPLEMENTATION_PLAN.md",
+    "05_TEST_AND_ACCEPTANCE.md",
+    "06_KEYFRAME_REVERSE_ENGINEERING_CHECKLIST.md"
+  ],
+  "generated": "2026-09-19",
+  "primary_start_file": "00_AGENT_START_HERE.md"
+}
