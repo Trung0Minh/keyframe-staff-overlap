@@ -1,57 +1,35 @@
 # KeyFrame Staff Overlap
 
-An unofficial browser extension for comparing public staff credits on KeyFrame
-Staff List. Chromium / Manifest V3, version 0.1.7 preview.
+An unofficial Chromium extension for comparing public staff credits from [KeyFrame Staff List](https://keyframe-staff-list.com/).
 
-## Preview scope
+## What it does
 
-The extension supports 2+ selected people, one unified comparison view, all credited
-roles and units, NC flags, notes, partial overlaps, progress, cancellation,
-24-hour caching, and refresh. It saves your selection locally as you browse.
+- Search staff by name or alias from any KeyFrame page.
+- Compare two or more staff members in one centered view.
+- Keep each staff member in a parallel column for every episode or unit.
+- Put episodes shared by everyone first and group roles within each episode.
+- Preserve source notes, attribution, and NC flags.
+- Cache public histories locally and refresh them on demand.
 
-Comparison opens in a wide, centered window. Each production displays the
-selected staff's credits in parallel columns, in selection order. On smaller
-screens or with larger groups, scroll the columns sideways; keyboard users
-can focus the credit area and use the arrow keys.
+## Download
 
-**Search works across KeyFrame from any page.** Enter at least two characters
-of a Latin or Japanese name or alias. Suggestions use KeyFrame's native public
-autocomplete and retain canonical profile identity, including name-based profiles.
-Broad queries show up to ten suggestions; type more of the name to narrow them.
+The current packaged build is available on the [GitHub Releases page](https://github.com/Trung0Minh/keyframe-staff-overlap/releases).
 
-## Install the built extension
+For version 0.1.7, download [keyframe-staff-overlap-0.1.7.zip](https://github.com/Trung0Minh/keyframe-staff-overlap/releases/download/initial-0.1.7/keyframe-staff-overlap-0.1.7.zip).
 
-1. Open Chrome's Extensions page (`chrome://extensions`).
-2. Enable **Developer mode**.
-3. Choose **Load unpacked** and select this project's `dist` directory.
-4. Reload an open KeyFrame page. Select **Compare Staff** at the lower left.
+## Install locally
 
-The ZIP in `artifacts/keyframe-staff-overlap-0.1.7.zip` contains the same build.
-Extract it first and load the extracted folder through **Load unpacked**.
-After rebuilding, use **Reload** on the extension card and reload the site tab.
+1. Download and extract the ZIP.
+2. Open `chrome://extensions` in Chrome or another Chromium browser.
+3. Enable **Developer mode**.
+4. Choose **Load unpacked** and select the extracted folder.
+5. Open a KeyFrame page and use **Compare Staff**.
 
-## Use
-
-Select two or more people and choose **Compare**. Results show productions
-credited to everyone, with one row per episode/unit and one column per person.
-Each cell contains that person's roles for that episode, without repeating the
-episode label for each role. Repeated entries of the same role are grouped while
-retaining their source notes and attribution under **Credit details**.
-
-Rows shared by everyone appear first with a subtle purple highlight. Rows shared by a subset come next, then individual units.
-Overview and unspecified-unit credits appear last; Overview never implies an
-episode match. OP and OP1 remain distinct. Empty cells say **No credit listed**.
-There is no mode switch and no credit filter. If there is no production common
-to everyone, partial groups are shown separately.
-
-**Refresh** reloads the selected histories. Failed histories prevent results;
-they never appear as an empty collaboration list. Close, cancel, selection
-changes discard obsolete requests. Escape first dismisses
-open suggestions, then closes the panel and returns focus to its trigger.
+The Chrome Web Store release is not published yet. Store publishing is wired to GitHub Actions and is documented in [`docs/CHROME_WEB_STORE_RELEASE.md`](docs/CHROME_WEB_STORE_RELEASE.md).
 
 ## Development
 
-Requires Node.js 24+ and npm. Python 3 is needed only for ZIP packaging.
+Requirements: Node.js 24+ and Python 3 for packaging.
 
 ```sh
 npm ci
@@ -61,72 +39,32 @@ npm run build
 npm run package
 ```
 
-TypeScript is the only build dependency. The UI uses native DOM elements and a
-Shadow DOM; the centered window uses the browser's modal dialog for focus handling.
-Native browser features keep the build small without additional UI packages. No service worker or backend is included.
+The package command writes the unpacked extension to `dist/` and the ZIP to `artifacts/`.
 
-### Automated releases
+Run the browser tests with Playwright:
 
-The repository includes GitHub Actions for pull request/main quality checks and
-tagged releases. To publish a version, update the version in `manifest.json`,
-`package.json`, and `package-lock.json`, then push a matching tag:
+```sh
+npm install --no-save --package-lock=false playwright
+npx playwright install chromium
+npm run test:e2e
+```
+
+## Releases
+
+Push a tag matching the versions in `manifest.json`, `package.json`, and `package-lock.json`:
 
 ```sh
 git tag v0.1.8
 git push origin v0.1.8
 ```
 
-The release workflow tests, packages, creates a GitHub Release, and uploads the
-same ZIP to the Chrome Web Store. Add these repository secrets before using it:
-`CHROME_EXTENSION_ID`, `CHROME_CLIENT_ID`, `CHROME_CLIENT_SECRET`, and
-`CHROME_REFRESH_TOKEN`. The Chrome Web Store must already contain the extension.
-Users receive published updates through Chrome's normal extension update cycle;
-commits alone do not publish or update an installed extension.
+GitHub Actions runs the checks, builds the ZIP, creates a GitHub Release, and publishes the update to the Chrome Web Store after its repository secrets are configured.
 
-### Browser tests
+## Privacy
 
-`tests/e2e.mjs` loads the actual unpacked extension with an isolated profile
-and a temporary manifest that matches a localhost fixture. All KeyFrame API
-responses are mocked and unexpected external requests are blocked. The
-production manifest remains limited to KeyFrame.
+- The extension requests only the `storage` permission.
+- Content scripts run only on `keyframe-staff-list.com`.
+- It stores selected staff and cached public histories in extension-local storage.
+- It has no backend, analytics, credential collection, or remote executable code.
 
-With Playwright and its Chromium installed:
-
-```sh
-npm install --no-save --package-lock=false playwright
-npx playwright install chromium
-npm run build
-npm run test:e2e
-```
-
-Alternatively set `PLAYWRIGHT_MODULE` to the absolute path of an existing
-Playwright package's `index.js`. Screenshots go to `test-results/`.
-
-The script covers selection, Japanese/alias queries, episode rows, shared-first ordering, role grouping,
-partial overlaps, caching, refresh, failure recovery, cancellation,
-Escape/focus, page navigation, saved selections, and a narrow viewport.
-The suite passed on a page with no staff links. Live extension search was also
-verified on home, person and staff-list pages, followed by a real two-person
-comparison. Desktop and mobile screenshots were inspected.
-
-Browser verification passes for the centered window and parallel columns,
-including three/five-person layouts, keyboard horizontal scrolling, and backdrop
-dismissal. Version 0.1.7 checks unique episode rows, grouped roles, shared-first ordering,
-empty cells, and retained NC flags and notes.
-
-## Privacy and permissions
-
-- Only the `storage` permission is requested. Content scripts match KeyFrame only.
-- Histories are requested only for selected people, with at most four in flight.
-- No catalog crawling, analytics, credential collection, or remote executable code.
-- Selected names/IDs and cached public histories are kept in extension-local
-  storage. Removing the extension removes that storage.
-- Ordinary same-origin page requests may send site cookies through the browser;
-  the extension does not read or store those cookies.
-- Data-source details and outstanding verification are in `docs/DATA_SOURCE_NOTES.md`.
-
-## Remaining work for the full MVP
-
-- Verify several real profiles, history completeness, aliases, and pagination.
-- Inspect a Download JSON sample and validate role/unit semantics against it.
-- Record server cache/rate-limit headers and verify broader live-site acceptance cases.
+See [`docs/DATA_SOURCE_NOTES.md`](docs/DATA_SOURCE_NOTES.md) for data-source details.
